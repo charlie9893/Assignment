@@ -41,6 +41,58 @@
     </style>
 </head>
 
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var data = @Html.Raw(Json.Serialize(Model));  
+        var total = 0;
+        for (var key in data) {
+            total += data[key];
+        }
+
+        var startAngle = 0;
+        var radius = 150;
+        var svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+        svg.setAttribute('width', '600');
+        svg.setAttribute('height', '600');
+
+        for (var key in data) {
+            var sliceAngle = 2 * Math.PI * data[key] / total;
+            var endAngle = startAngle + sliceAngle;
+
+            var x1 = 300 + radius * Math.sin(startAngle);
+            var y1 = 300 - radius * Math.cos(startAngle);
+            var x2 = 300 + radius * Math.sin(endAngle);
+            var y2 = 300 - radius * Math.cos(endAngle);
+
+            var pathData = [
+                'M', 300, 300,
+                'L', x1, y1,
+                'A', radius, radius, 0, sliceAngle > Math.PI ? 1 : 0, 1, x2, y2,
+                'L', 300, 300
+            ].join(' ');
+
+            var path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+            path.setAttribute('d', pathData);
+            path.setAttribute('fill', 'hsl(' + Math.random() * 360 + ', 100%, 75%)');
+            svg.appendChild(path);
+
+            startAngle = endAngle;
+
+            var text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+            text.setAttribute('x', 300 + radius * 1.2 * Math.sin(startAngle - sliceAngle / 2));
+            text.setAttribute('y', 300 - radius * 1.2 * Math.cos(startAngle - sliceAngle / 2));
+            text.setAttribute('text-anchor', 'middle');
+            text.setAttribute('font-size', '10px');
+            text.setAttribute('font-weight', 'bold');
+            text.textContent = key + ' ' + (100 * data[key] / total).toFixed(2) + '%';
+            svg.appendChild(text);
+        }
+
+        document.querySelector('.chart-container').appendChild(svg);
+    });
+
+</script>
+
 <body>
     <table>
         <thead>
