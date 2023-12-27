@@ -1,12 +1,12 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.Text.Json;
 
-public class EmployeesController : Controller
+public class EmployeeController : Controller
 {
     private readonly HttpClient _client;
     private List<Dictionary<string, object>> _data;
 
-    public EmployeesController()
+    public EmployeeController()
     {
         _client = new HttpClient();
         _data = new List<Dictionary<string, object>>();
